@@ -5,8 +5,11 @@ name = "pypi"
 
 [packages]
 django = "*"
+environs = "*"
+infisical = "*"
 
 [dev-packages]
+ipython = "*"
 
 [requires]
 python_version = "3.11"
