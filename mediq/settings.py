@@ -12,20 +12,27 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 
+from environs import Env
+from infisical import InfisicalClient
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+env = Env()
+env.read_env()
+
+inf_client = InfisicalClient(token=env('INFISICAL_TOKEN'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-b801aqcb%x@9xtpfh^04l$v53z#_4jhb!e4os4+2^nnnq$-r59'
+SECRET_KEY = inf_client.get_secret('SECRET_KEY').secret_value
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(inf_client.get_secret('DEBUG').secret_value)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = inf_client.get_secret('ALLOWED_HOSTS').secret_value.split(',')
 
 
 # Application definition
