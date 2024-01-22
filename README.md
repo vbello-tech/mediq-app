@@ -2,8 +2,8 @@
 
 ### Contributors
 
-| Name | Network | GitHub Handle  |
-|------|---------|----------------|
-| Deji | HQ      | @thedejijoseph |
-|      |         |                |
-|      |         |                |
+| Name   | Network | GitHub Handle  |
+|--------|-------|----------------|
+| Deji   | HQ    | @thedejijoseph |
+| Victor |       | @vbello-tech   |
+|        |       |                |
