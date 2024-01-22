@@ -9,6 +9,7 @@ environs = "*"
 typing-extensions = "*"
 infisical = "*"
 psycopg2-binary = "*"
+whitenoise = "*"
 
 [dev-packages]
 ipython = "*"
