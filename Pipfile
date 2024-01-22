@@ -8,6 +8,7 @@ django = "*"
 environs = "*"
 typing-extensions = "*"
 infisical = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 ipython = "*"

@@ -82,9 +82,13 @@ WSGI_APPLICATION = 'mediq.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': inf_client.get_secret('DB_NAME').secret_value,
+        'USER': inf_client.get_secret('DB_USER').secret_value,
+        'PASSWORD': inf_client.get_secret('DB_PASS').secret_value,
+        'HOST': inf_client.get_secret('DB_HOST').secret_value,
+        'PORT': inf_client.get_secret('DB_PORT').secret_value, # default PostgreSQL port
+    },
 }
 
 
