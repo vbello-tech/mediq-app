@@ -45,6 +45,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     "whitenoise.runserver_nostatic",
     'django.contrib.staticfiles',
+
+    # third-party apps
+    'rest_framework',
+
+    # mediq apps
+    'accounts',
 ]
 
 MIDDLEWARE = [
