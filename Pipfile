@@ -11,6 +11,7 @@ infisical = "*"
 psycopg2-binary = "*"
 whitenoise = "*"
 gunicorn = "*"
+djangorestframework = "*"
 
 [dev-packages]
 ipython = "*"
