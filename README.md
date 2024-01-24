@@ -6,4 +6,4 @@
 |--------|-------|----------------|
 | Deji   | HQ    | @thedejijoseph |
 | Victor |       | @vbello-tech   |
-| Opeyemi|       | @opeyemiloc    |
+| opeyemi|       | @opeyemiloc    |
