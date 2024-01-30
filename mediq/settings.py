@@ -48,9 +48,11 @@ INSTALLED_APPS = [
 
     # third-party apps
     'rest_framework',
+    'rest_framework_simplejwt',
 
     # mediq apps
     'accounts',
+    'organizations',
 ]
 
 MIDDLEWARE = [
@@ -118,6 +120,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    )
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/

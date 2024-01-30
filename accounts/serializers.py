@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from accounts.models import Account
 
+
 class AccountSerializer(serializers.Serializer):
     uid = serializers.CharField(read_only=True)
     account_id = serializers.CharField(read_only=True)
