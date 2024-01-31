@@ -1,13 +1,16 @@
-import random, string
+import random
+import string
+
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
-from rest_framework import generics, viewsets
-from rest_framework.decorators import *
+from rest_framework import status
+from rest_framework import viewsets
+from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.generics import GenericAPIView
+
 from .models import Organization
 from .serializers import OrganizationSerializer
-from rest_framework import status
 
 
 # generate random 5 digits that would be used as organisation_id.
@@ -17,7 +20,9 @@ def code():
 
 class OrganizationViewSet(viewsets.ModelViewSet):
     """
-    create organisation
+    view to creating organisation and fetching all organisations
+    post request to create
+    get request to fetch
     """
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
@@ -27,23 +32,72 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         serializer.save(organisation_registered=True, organisation_id=code())
         return super().perform_create(serializer)
 
-    def perform_destroy(self, serializer):
-        return super().perform_destroy(serializer)
 
+class OrganizationRetrieveUpdateDeleteView(GenericAPIView):
+    """
+    View to handle fetching, updating and deleting an organization
+    """
+    serializer_class = OrganizationSerializer
+    permission_classes = [IsAuthenticated]
 
-@api_view(['GET'])
-@permission_classes((IsAuthenticated,))
-def get_organisation(request, uuid):
-    """fetch organisation with a specific uuid """
-    business = Organization.objects.get(uuid=uuid)
-    serializer = OrganizationSerializer(business, many=False)
-    if serializer:
+    def get(self, request, uuid, *args, **kwargs):
+        """Retrieve"""
+        try:
+            organisation = Organization.objects.get(uuid=uuid)
+        except ObjectDoesNotExist:
+            return Response({
+                "message": "You dont have an Organization",
+                "status": "failed"
+            }, status=status.HTTP_404_NOT_FOUND)
+        serializer = OrganizationSerializer(organisation, many=False)
+        if serializer:
+            return Response({
+                'message': 'Organization details fetched',
+                'data': serializer.data,
+                'status': 'success'
+            }, status.HTTP_200_OK)
+
+    def patch(self, request, uuid, *args, **kwargs):
+        """Update"""
+        try:
+            organisation = Organization.objects.get(uuid=uuid)
+        except ObjectDoesNotExist:
+            return Response({
+                "message": "You dont have an Organization",
+                "status": "failed"
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = self.serializer_class(organisation, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        saved_serializer = serializer.save()
+        serialized_data = OrganizationSerializer(saved_serializer).data
+        return Response(
+            {
+                "message": "Organization updated",
+                "data": serialized_data,
+                "status": "success"
+            }, status=status.HTTP_202_ACCEPTED)
+
+    def delete(self, request, uuid, *args, **kwargs):
+        """Delete"""
+        try:
+            organisation = Organization.objects.get(uuid=uuid)
+        except ObjectDoesNotExist:
+            return Response({
+                "message": "You dont have an Organization",
+                "status": "failed"
+            }, status=status.HTTP_404_NOT_FOUND)
+        organisation.delete()
         return Response({
-            'name': serializer.data,
-        })
+            "message": "Organization deleted",
+            "status": "sucess"
+        }, status=status.HTTP_204_NO_CONTENT)
 
 
 class VerifyOrganisationView(GenericAPIView):
+    """
+    view to handle verifying an organisation
+    """
     permission_classes = [IsAuthenticated]
 
     def post(self, request, uuid, *args, **kwargs):
@@ -66,17 +120,20 @@ class VerifyOrganisationView(GenericAPIView):
 
 
 class VerifyContactPersonView(GenericAPIView):
+    """
+    view to handle verifying an organization contact person
+    """
     permission_classes = [IsAuthenticated]
 
     def post(self, request, uuid, *args, **kwargs):
         organisation = get_object_or_404(Organization, uuid=uuid)
-        organisation.contact_email_verfied = True
+        organisation.contact_email_verified = True
         organisation.save()
         data = {
             "organisation_contact_name": organisation.contact_name,
             "organisation_contact_phone": organisation.contact_phone,
             "organisation_contact_email": organisation.contact_email,
-            "organisation_contact_email_verified": organisation.contact_email_verfied,
+            "organisation_contact_email_verified": organisation.contact_email_verified,
         }
         return Response(
             {

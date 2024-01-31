@@ -2,16 +2,18 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
     OrganizationViewSet,
-    get_organisation,
-    VerifyOrganisationView
+    OrganizationRetrieveUpdateDeleteView,
+    VerifyOrganisationView,
+    VerifyContactPersonView,
 )
 
 router = DefaultRouter()
 
-router.register("", OrganizationViewSet, basename="create")
+router.register("create-or-fetch-all", OrganizationViewSet, basename="create")
 
 urlpatterns = [
     path("", include(router.urls)),
-    path('<str:uuid>/', get_organisation, name='organisation'),
-    path('verify/<str:uuid>/', VerifyOrganisationView.as_view(), name='verify'),
+    path('<str:uuid>/', OrganizationRetrieveUpdateDeleteView.as_view(), name='fetch_update_delete'),
+    path('<str:uuid>/verify/', VerifyOrganisationView.as_view(), name='verify_organization'),
+    path('<str:uuid>/verify/contact-person/', VerifyContactPersonView.as_view(), name='verify_contact')
 ]
