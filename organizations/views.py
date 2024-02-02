@@ -30,6 +30,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(organisation_registered=True, organisation_id=code())
+        msg = "Organization created"
         return super().perform_create(serializer)
 
 
@@ -46,7 +47,7 @@ class OrganizationRetrieveUpdateDeleteView(GenericAPIView):
             organisation = Organization.objects.get(uuid=uuid)
         except ObjectDoesNotExist:
             return Response({
-                "message": "You dont have an Organization",
+                "message": "Organization does not exist",
                 "status": "failed"
             }, status=status.HTTP_404_NOT_FOUND)
         serializer = OrganizationSerializer(organisation, many=False)
@@ -84,7 +85,7 @@ class OrganizationRetrieveUpdateDeleteView(GenericAPIView):
             organisation = Organization.objects.get(uuid=uuid)
         except ObjectDoesNotExist:
             return Response({
-                "message": "You dont have an Organization",
+                "message": "Organization Does not exist",
                 "status": "failed"
             }, status=status.HTTP_404_NOT_FOUND)
         organisation.delete()
@@ -101,7 +102,14 @@ class VerifyOrganisationView(GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, uuid, *args, **kwargs):
-        organisation = get_object_or_404(Organization, uuid=uuid)
+        try:
+            organisation = get_object_or_404(Organization, uuid=uuid)
+        except ObjectDoesNotExist:
+            return Response(
+                {
+                    "message": "Your organisation verification failed",
+                    "status": "Organization not found"
+                }, status=status.HTTP_404_NOT_FOUND)
         organisation.onboarding_status = 'onboarding_complete'
         organisation.access_status = 'access_granted'
         organisation.save()
@@ -126,7 +134,14 @@ class VerifyContactPersonView(GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, uuid, *args, **kwargs):
-        organisation = get_object_or_404(Organization, uuid=uuid)
+        try:
+            organisation = get_object_or_404(Organization, uuid=uuid)
+        except ObjectDoesNotExist:
+            return Response(
+                {
+                    "message": "Your organisation contact person verification failed",
+                    "status": "Organization not found"
+                }, status=status.HTTP_404_NOT_FOUND)
         organisation.contact_email_verified = True
         organisation.save()
         data = {
