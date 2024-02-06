@@ -18,20 +18,39 @@ def code():
     return ''.join(random.choices(string.ascii_lowercase + string.digits, k=5))
 
 
-class OrganizationViewSet(viewsets.ModelViewSet):
+class OrganizationCreateAndFetchAll(GenericAPIView):
     """
     view to creating organisation and fetching all organisations
     post request to create
     get request to fetch
     """
-    queryset = Organization.objects.all()
-    serializer_class = OrganizationSerializer
-    permission_classes = [IsAuthenticated]
 
-    def perform_create(self, serializer):
-        serializer.save(organisation_registered=True, organisation_id=code())
-        msg = "Organization created"
-        return super().perform_create(serializer)
+    permission_classes = [IsAuthenticated]
+    serializer_class = OrganizationSerializer
+
+    def get(self, request, *args, **kwargs):
+        """Retrieve"""
+        organisation = Organization.objects.all()
+        serializer = self.serializer_class(organisation, many=True)
+        if serializer:
+            return Response({
+                'message': 'All Organizations details fetched',
+                'data': serializer.data,
+                'status': 'success'
+            }, status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        created_organization = serializer.save()
+        serialized_data = self.serializer_class(created_organization).data
+
+        return Response(
+            {
+                "message": "Organization created successfully",
+                "data": serialized_data,
+                "status": "success"
+            }, status=status.HTTP_201_CREATED)
 
 
 class OrganizationRetrieveUpdateDeleteView(GenericAPIView):
