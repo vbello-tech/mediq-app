@@ -35,5 +35,11 @@ class OrganizationSerializer(serializers.Serializer):
     contact_email_verified = serializers.CharField()
     access_status = serializers.ChoiceField(choices=access_status, read_only=True)
 
+    def create(self, validated_data):
+        """
+        Create and return a new Account
+        """
+
+        return Organization.objects.create(**validated_data)
 
 
