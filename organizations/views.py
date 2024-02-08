@@ -1,16 +1,21 @@
 import random
 import string
+import urllib.parse
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework import viewsets
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from accounts.models import Account
 
-from .models import Organization
+from .models import Organization, OrganizationInvite
 from .serializers import OrganizationSerializer
+from django.core import mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 
 # generate random 5 digits that would be used as organisation_id.
@@ -175,3 +180,51 @@ class VerifyContactPersonView(GenericAPIView):
                 "data": data,
                 "status": "success"
             }, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes((IsAuthenticated,))
+def send_invite(request, uuid):
+    organization = Organization.objects.get(pk=uuid)
+    invite = Organization.Create(
+        organization=organization,
+        email=request.data.email,
+        role=request.data.role
+    )
+    query = urllib.parse.quote(invite.slu)
+    invite_url = 'http://127.0.0.1:8000/organisation/accpet-invite/' + query
+    subject = 'Subject'
+    html_message = render_to_string('account/signup_email.html', {
+        'email': invite.email,
+        'role': invite.role,
+        'code': invite.slug,
+        'organization': organization.name,
+        'invite': invite_url
+    })
+    plain_message = strip_tags(html_message)
+    mail.send_mail(subject, plain_message, 'pmi@gmail.com', [invite.email], html_message=html_message)
+    return Response({
+        'msg': "Invite sent",
+        "reciever's email": invite.email,
+        'invite id': invite.slug
+    })
+
+
+@api_view(['POST'])
+@permission_classes((IsAuthenticated,))
+def accept_invite(request, slug):
+    invite = OrganizationInvite.objects.get(slug=slug)
+    user = Account.object.get(email=invite.email)
+    user.organisation = invite.organization
+    user.organisation_role = invite.role
+    user.save()
+    invite.delete()
+    return Response({
+        'msg': "User added to organization",
+        'data': {
+            'name': user.name,
+            'email': user.email,
+            'organization': user.organisation,
+            'role': user.organisation_role
+        },
+    })

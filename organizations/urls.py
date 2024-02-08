@@ -5,6 +5,8 @@ from .views import (
     OrganizationRetrieveUpdateDeleteView,
     VerifyOrganisationView,
     VerifyContactPersonView,
+    send_invite,
+    accept_invite
 )
 
 router = DefaultRouter()
@@ -16,5 +18,7 @@ urlpatterns = [
     path('create-or-fetch-all/', OrganizationCreateAndFetchAll.as_view(), name="create_or_fetch_all"),
     path('<str:uuid>/', OrganizationRetrieveUpdateDeleteView.as_view(), name='fetch_update_delete'),
     path('<str:uuid>/verify/', VerifyOrganisationView.as_view(), name='verify_organization'),
-    path('<str:uuid>/verify/contact-person/', VerifyContactPersonView.as_view(), name='verify_contact')
+    path('<str:uuid>/verify/contact-person/', VerifyContactPersonView.as_view(), name='verify_contact'),
+    path('<str:uuid>/send-invite/', send_invite, name="send_invite"),
+    path('accept-invite/<str:slug>/', accept_invite, name="accept_invite"),
 ]

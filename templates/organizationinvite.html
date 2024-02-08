@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome to BackEndGuru.</title>
+  <style>
+    /* Inline CSS styles for simplicity - consider using classes for better organization */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+    }
+    p {
+      color: #555;
+      line-height: 1.6;
+    }
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      text-align: center;
+    }
+    .btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to BackEndGuru</h1>
+    <p>You are recieving this mail because your email address {{ email }}was submitted for you to be added to {{ organization }}
+        organization on our software for the position of {{ role }}.
+    </p>
+    <p style="text-align: center;">Click <a href="{{ invite }}" class="btn">HERE</a> to accept the invite<br></p>
+    <p>If this is a wrong email kindly ignore</p>
+    <p>Best regards,<br> MEDIQ-APP team.</p>
+  </div>
+</body>
+</html>

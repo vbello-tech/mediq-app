@@ -1,6 +1,9 @@
+import random
+import string
 import uuid
 
 from django.db import models
+
 
 # Create your models here.
 
@@ -37,3 +40,13 @@ class Organization(models.Model):
     contact_email_verified = models.BooleanField(default=False)
     access_status = models.CharField(choices=access_status, max_length=25)
 
+
+def slugcode():
+    return ''.join(random.choices(string.ascii_lowercase + string.digits, k=7))
+
+
+class OrganizationInvite(models.Model):
+    organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
+    email = models.EmailField()
+    role = models.TextField()
+    slug = models.SlugField(default=slugcode())
