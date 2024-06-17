@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     # mediq apps
     'accounts',
     'organizations',
+    'services'
 ]
 
 MIDDLEWARE = [

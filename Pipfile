@@ -13,6 +13,7 @@ whitenoise = "*"
 gunicorn = "*"
 djangorestframework = "*"
 djangorestframework-simplejwt = "*"
+infisical-python = "*"
 
 [dev-packages]
 ipython = "*"
